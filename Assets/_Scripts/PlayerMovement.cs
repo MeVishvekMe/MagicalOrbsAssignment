@@ -12,6 +12,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private Transform _cameraTransform;
+    [SerializeField] private ParticleSystem runningPS;
 
     private CharacterController _controller;
     private float _verticalVelocity;
@@ -32,7 +33,9 @@ public class PlayerMovement : MonoBehaviour
         // Movement direction (camera-relative)
         Vector3 moveDir = Vector3.zero;
 
-        if (inputDir.magnitude >= 0.1f) {
+        bool isMoving = inputDir.magnitude >= 0.1f;
+
+        if (isMoving) {
             // -- CAMERA RELATIVE DIRECTION --
             Vector3 camForward = _cameraTransform.forward;
             Vector3 camRight = _cameraTransform.right;
@@ -70,6 +73,15 @@ public class PlayerMovement : MonoBehaviour
                 _verticalVelocity = Mathf.Sqrt(_jumpHeight * -2f * _gravity);
             }
         }
+        
+        // Enable Particle System
+        if (isMoving && isGrounded) {
+            if(!runningPS.isPlaying) 
+                runningPS.Play();
+        }
+        else {
+            runningPS.Stop();
+        }
 
         // Gravity always applies
         _verticalVelocity += _gravity * Time.deltaTime;
@@ -80,4 +92,5 @@ public class PlayerMovement : MonoBehaviour
 
         _controller.Move(finalVelocity * Time.deltaTime);
     }
+    
 }
