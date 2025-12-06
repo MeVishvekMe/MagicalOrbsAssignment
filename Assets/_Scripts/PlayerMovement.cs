@@ -15,10 +15,13 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private ParticleSystem runningPS;
 
     private CharacterController _controller;
+    private Animator _animator;
+    private bool isRunningAnimationPlaying = false;
     private float _verticalVelocity;
 
     private void Start() {
         _controller = GetComponent<CharacterController>();
+        _animator = GetComponent<Animator>();
     }
 
     private void Update() {
@@ -74,13 +77,16 @@ public class PlayerMovement : MonoBehaviour
             }
         }
         
-        // Enable Particle System
+        // Enable Particle System & Running Animation
         if (isMoving && isGrounded) {
             if(!runningPS.isPlaying) 
                 runningPS.Play();
+            if(!isRunningAnimationPlaying)
+                _animator.SetBool("isRunning", true);
         }
         else {
             runningPS.Stop();
+            _animator.SetBool("isRunning", false);
         }
 
         // Gravity always applies
